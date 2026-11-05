@@ -1,0 +1,266 @@
+#include <stdio.h>
+
+#define MAX_LEN 200
+
+// Helper function to remove trailing newline character added by fgets()
+void trim_newline(char str[]) {
+    int i = 0;
+    while (str[i] != '\0') {
+        if (str[i] == '\n') {
+            str[i] = '\0';
+            break;
+        }
+        i++;
+    }
+}
+
+// =============================================================================
+// SECTION 1: FUNCTIONS WITHOUT POINTERS (Array Indexing)
+// =============================================================================
+
+// a) Find length of a string
+int str_len_array(char str[]) {
+    int len = 0;
+    while (str[len] != '\0') {
+        len++;
+    }
+    return len;
+}
+
+// b) Copy a string
+void str_copy_array(char dest[], char src[]) {
+    int i = 0;
+    while (src[i] != '\0') {
+        dest[i] = src[i];
+        i++;
+    }
+    dest[i] = '\0';
+}
+
+// c) Concatenate two strings into first
+void str_concat_array(char dest[], char src[]) {
+    int i = str_len_array(dest);
+    int j = 0;
+    while (src[j] != '\0') {
+        dest[i] = src[j];
+        i++;
+        j++;
+    }
+    dest[i] = '\0';
+}
+
+// d) Compare two strings
+int str_cmp_array(char str1[], char str2[]) {
+    int i = 0;
+    while (str1[i] != '\0' && str2[i] != '\0') {
+        if (str1[i] != str2[i]) {
+            return str1[i] - str2[i];
+        }
+        i++;
+    }
+    return str1[i] - str2[i];
+}
+
+// e) Reverse a string
+void str_rev_array(char str[]) {
+    int len = str_len_array(str);
+    for (int i = 0; i < len / 2; i++) {
+        char temp = str[i];
+        str[i] = str[len - 1 - i];
+        str[len - 1 - i] = temp;
+    }
+}
+
+// f) Check whether a string is palindrome or not
+int str_is_palindrome_array(char str[]) {
+    int len = str_len_array(str);
+    for (int i = 0; i < len / 2; i++) {
+        if (str[i] != str[len - 1 - i])
+            return 0;
+    }
+    return 1;
+}
+
+// g) Find a substring
+int str_find_substr_array(char main_str[], char sub_str[]) {
+    int main_len = str_len_array(main_str);
+    int sub_len = str_len_array(sub_str);
+
+    if (sub_len == 0) return 0;
+
+    for (int i = 0; i <= main_len - sub_len; i++) {
+        int j;
+        for (j = 0; j < sub_len; j++) {
+            if (main_str[i + j] != sub_str[j])
+                break;
+        }
+        if (j == sub_len) return i;
+    }
+    return -1;
+}
+
+// =============================================================================
+// SECTION 2: FUNCTIONS WITH POINTERS
+// =============================================================================
+
+// a) Find length of a string (Pointer)
+int str_len_ptr(char *str) {
+    char *ptr = str;
+    while (*ptr != '\0') {
+        ptr++;
+    }
+    return (int)(ptr - str);
+}
+
+// b) Copy a string (Pointer)
+void str_copy_ptr(char *dest, char *src) {
+    while (*src != '\0') {
+        *dest = *src;
+        dest++;
+        src++;
+    }
+    *dest = '\0';
+}
+
+// c) Concatenate two strings into first (Pointer)
+void str_concat_ptr(char *dest, char *src) {
+    while (*dest != '\0') {
+        dest++;
+    }
+    while (*src != '\0') {
+        *dest = *src;
+        dest++;
+        src++;
+    }
+    *dest = '\0';
+}
+
+// d) Compare two strings (Pointer)
+int str_cmp_ptr(char *str1, char *str2) {
+    while (*str1 != '\0' && *str2 != '\0' && *str1 == *str2) {
+        str1++;
+        str2++;
+    }
+    return *str1 - *str2;
+}
+
+// e) Reverse a string (Pointer)
+void str_rev_ptr(char *str) {
+    char *end = str;
+    if (!*end) return;
+
+    while (*(end + 1) != '\0') {
+        end++;
+    }
+    while (str < end) {
+        char temp = *str;
+        *str = *end;
+        *end = temp;
+        str++;
+        end--;
+    }
+}
+
+// f) Check whether a string is palindrome or not (Pointer)
+int str_is_palindrome_ptr(char *str) {
+    char *end = str;
+    if (!*end) return 1;
+
+    while (*(end + 1) != '\0') {
+        end++;
+    }
+    while (str < end) {
+        if (*str != *end)
+            return 0;
+        str++;
+        end--;
+    }
+    return 1;
+}
+
+// g) Find a substring (Pointer)
+int str_find_substr_ptr(char *main_str, char *sub_str) {
+    char *p1, *p2;
+    int index = 0;
+
+    if (!*sub_str) return 0;
+
+    while (*main_str != '\0') {
+        p1 = main_str;
+        p2 = sub_str;
+
+        while (*p1 != '\0' && *p2 != '\0' && *p1 == *p2) {
+            p1++;
+            p2++;
+        }
+        if (*p2 == '\0') return index;
+
+        main_str++;
+        index++;
+    }
+    return -1;
+}
+
+// =============================================================================
+// MAIN FUNCTION
+// =============================================================================
+int main() {
+    char str1[MAX_LEN], str2[MAX_LEN], temp[MAX_LEN], sub[MAX_LEN];
+    int pos;
+
+    // Reading inputs using fgets() as required
+    printf("Enter String 1: ");
+    fgets(str1, sizeof(str1), stdin);
+    trim_newline(str1);
+
+    printf("Enter String 2: ");
+    fgets(str2, sizeof(str2), stdin);
+    trim_newline(str2);
+
+    printf("\n--- WITHOUT POINTERS ---\n");
+    printf("a) Length of String 1: %d\n", str_len_array(str1));
+
+    str_copy_array(temp, str1);
+    printf("b) Copy of String 1: %s\n", temp);
+
+    str_copy_array(temp, str1);
+    str_concat_array(temp, str2);
+    printf("c) Concatenation (String 1 + String 2): %s\n", temp);
+
+    printf("d) Comparison result: %d\n", str_cmp_array(str1, str2));
+
+    str_copy_array(temp, str1);
+    str_rev_array(temp);
+    printf("e) Reverse of String 1: %s\n", temp);
+
+    printf("f) Is String 1 Palindrome?: %s\n", str_is_palindrome_array(str1) ? "Yes" : "No");
+
+    printf("Enter Substring to search in String 1: ");
+    fgets(sub, sizeof(sub), stdin);
+    trim_newline(sub);
+    pos = str_find_substr_array(str1, sub);
+    printf("g) Substring index: %d\n", pos);
+
+    printf("\n--- WITH POINTERS ---\n");
+    printf("a) Length of String 1: %d\n", str_len_ptr(str1));
+
+    str_copy_ptr(temp, str1);
+    printf("b) Copy of String 1: %s\n", temp);
+
+    str_copy_ptr(temp, str1);
+    str_concat_ptr(temp, str2);
+    printf("c) Concatenation (String 1 + String 2): %s\n", temp);
+
+    printf("d) Comparison result: %d\n", str_cmp_ptr(str1, str2));
+
+    str_copy_ptr(temp, str1);
+    str_rev_ptr(temp);
+    printf("e) Reverse of String 1: %s\n", temp);
+
+    printf("f) Is String 1 Palindrome?: %s\n", str_is_palindrome_ptr(str1) ? "Yes" : "No");
+
+    pos = str_find_substr_ptr(str1, sub);
+    printf("g) Substring index: %d\n", pos);
+
+    return 0;
+}
