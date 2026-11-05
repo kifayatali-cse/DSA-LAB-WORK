@@ -1,0 +1,103 @@
+#include <stdio.h>
+
+// a) Factorial
+long long factorial(int n) {
+    if (n <= 1) return 1;
+    return n * factorial(n - 1);
+}
+
+// b) Fibonacci Term Generator
+int fibonacci(int n) {
+    if (n <= 0) return 0;
+    if (n == 1) return 1;
+    return fibonacci(n - 1) + fibonacci(n - 2);
+}
+
+// c) Tower of Hanoi
+void towerOfHanoi(int n, char source, char destination, char auxiliary) {
+    if (n == 1) {
+        printf("Move disk 1 from rod %c to rod %c\n", source, destination);
+        return;
+    }
+    towerOfHanoi(n - 1, source, auxiliary, destination);
+    printf("Move disk %d from rod %c to rod %c\n", n, source, destination);
+    towerOfHanoi(n - 1, auxiliary, destination, source);
+}
+
+// d) Greatest Common Divisor (GCD) using Euclidean Algorithm
+int gcd(int a, int b) {
+    if (b == 0) return a;
+    return gcd(b, a % b);
+}
+
+// e) Recursive Binary Search
+int recursiveBinarySearch(int arr[], int low, int high, int key) {
+    if (low > high) return -1;
+
+    int mid = low + (high - low) / 2;
+    if (arr[mid] == key) return mid;
+    if (arr[mid] > key) return recursiveBinarySearch(arr, low, mid - 1, key);
+    return recursiveBinarySearch(arr, mid + 1, high, key);
+}
+
+// f) Ackermann Function
+int ackermann(int m, int n) {
+    if (m == 0) return n + 1;
+    else if (m > 0 && n == 0) return ackermann(m - 1, 1);
+    else return ackermann(m - 1, ackermann(m, n - 1));
+}
+
+// g) Sum of Digits
+int sumOfDigits(int n) {
+    if (n < 0) n = -n;
+    if (n == 0) return 0;
+    return (n % 10) + sumOfDigits(n / 10);
+}
+
+// Driver Code
+int main() {
+    printf("=== RECURSIVE FUNCTIONS DEMO ===\n\n");
+
+    // a) Factorial
+    int num_fact = 5;
+    printf("a) Factorial of %d = %lld\n\n", num_fact, factorial(num_fact));
+
+    // b) Fibonacci Series
+    int fib_terms = 7;
+    printf("b) Fibonacci series up to %d terms: ", fib_terms);
+    for (int i = 0; i < fib_terms; i++) {
+        printf("%d ", fibonacci(i));
+    }
+    printf("\n\n");
+
+    // c) Tower of Hanoi
+    int num_disks = 3;
+    printf("c) Tower of Hanoi solution for %d disks:\n", num_disks);
+    towerOfHanoi(num_disks, 'A', 'C', 'B');
+    printf("\n");
+
+    // d) GCD
+    int a = 48, b = 18;
+    printf("d) GCD of %d and %d = %d\n\n", a, b, gcd(a, b));
+
+    // e) Binary Search
+    int arr[] = {2, 5, 8, 12, 16, 23, 38, 56, 72, 91};
+    int size = sizeof(arr) / sizeof(arr[0]);
+    int key = 23;
+    int pos = recursiveBinarySearch(arr, 0, size - 1, key);
+    printf("e) Binary Search for %d: ", key);
+    if (pos != -1)
+        printf("Found at index %d\n\n", pos);
+    else
+        printf("Not Found\n\n");
+
+    // f) Ackermann Function
+    int m = 2, n = 2;
+    printf("f) Ackermann(%d, %d) = %d\n\n", m, n, ackermann(m, n));
+
+    // g) Sum of Digits
+    int num_digits = 12345;
+    printf("g) Sum of digits of %d = %d\n", num_digits, sumOfDigits(num_digits));
+
+    return 0;
+}
