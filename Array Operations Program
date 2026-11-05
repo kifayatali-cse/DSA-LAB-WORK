@@ -1,0 +1,242 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX 100
+
+// Function Declarations
+void traverse(int arr[], int size);
+int linearSearch(int arr[], int size, int key);
+int binarySearch(int arr[], int size, int key);
+int insertElement(int arr[], int *size, int element, int pos);
+int deleteElement(int arr[], int *size, int pos);
+void mergeArrays(int arr1[], int size1, int arr2[], int size2, int result[], int *resSize);
+void splitArray(int arr[], int size, int pos, int part1[], int *size1, int part2[], int *size2);
+void bubbleSort(int arr[], int size);
+
+int main() {
+    int arr[MAX], size = 0, choice, key, pos, element;
+    int arr2[MAX], size2 = 0, result[MAX * 2], resSize = 0;
+    int part1[MAX], size1 = 0, part2[MAX], size2_split = 0;
+
+    printf("Enter initial number of elements in array (max %d): ", MAX);
+    scanf("%d", &size);
+
+    printf("Enter %d elements:\n", size);
+    for (int i = 0; i < size; i++) {
+        scanf("%d", &arr[i]);
+    }
+
+    while (1) {
+        printf("\n--- ARRAY OPERATIONS MENU ---\n");
+        printf("1. Traversal\n");
+        printf("2. Linear Search\n");
+        printf("3. Binary Search (Requires Sorted Array)\n");
+        printf("4. Insertion\n");
+        printf("5. Deletion\n");
+        printf("6. Merging\n");
+        printf("7. Splitting\n");
+        printf("8. Sorting (Bubble Sort)\n");
+        printf("9. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                traverse(arr, size);
+                break;
+
+            case 2:
+                printf("Enter element to search: ");
+                scanf("%d", &key);
+                pos = linearSearch(arr, size, key);
+                if (pos != -1)
+                    printf("Element %d found at index %d (position %d).\n", key, pos, pos + 1);
+                else
+                    printf("Element %d not found in the array.\n", key);
+                break;
+
+            case 3:
+                printf("Enter element to search (ensure array is sorted first): ");
+                scanf("%d", &key);
+                pos = binarySearch(arr, size, key);
+                if (pos != -1)
+                    printf("Element %d found at index %d (position %d).\n", key, pos, pos + 1);
+                else
+                    printf("Element %d not found.\n", key);
+                break;
+
+            case 4:
+                printf("Enter element to insert: ");
+                scanf("%d", &element);
+                printf("Enter position (0 to %d): ", size);
+                scanf("%d", &pos);
+                if (insertElement(arr, &size, element, pos)) {
+                    printf("Element inserted successfully.\n");
+                    traverse(arr, size);
+                }
+                break;
+
+            case 5:
+                printf("Enter index to delete (0 to %d): ", size - 1);
+                scanf("%d", &pos);
+                if (deleteElement(arr, &size, pos)) {
+                    printf("Element deleted successfully.\n");
+                    traverse(arr, size);
+                }
+                break;
+
+            case 6:
+                printf("Enter size of second array: ");
+                scanf("%d", &size2);
+                printf("Enter %d elements for second array:\n", size2);
+                for (int i = 0; i < size2; i++) {
+                    scanf("%d", &arr2[i]);
+                }
+                mergeArrays(arr, size, arr2, size2, result, &resSize);
+                printf("Merged Array: ");
+                traverse(result, resSize);
+                break;
+
+            case 7:
+                printf("Enter split index position (1 to %d): ", size - 1);
+                scanf("%d", &pos);
+                splitArray(arr, size, pos, part1, &size1, part2, &size2_split);
+                printf("First Part: ");
+                traverse(part1, size1);
+                printf("Second Part: ");
+                traverse(part2, size2_split);
+                break;
+
+            case 8:
+                bubbleSort(arr, size);
+                printf("Array sorted successfully!\n");
+                traverse(arr, size);
+                break;
+
+            case 9:
+                exit(0);
+
+            default:
+                printf("Invalid choice! Please try again.\n");
+        }
+    }
+    return 0;
+}
+
+// a) Traversal
+void traverse(int arr[], int size) {
+    if (size == 0) {
+        printf("Array is empty.\n");
+        return;
+    }
+    printf("Array elements: ");
+    for (int i = 0; i < size; i++) {
+        printf("%d ", arr[i]);
+    }
+    printf("\n");
+}
+
+// b) Linear Search
+int linearSearch(int arr[], int size, int key) {
+    for (int i = 0; i < size; i++) {
+        if (arr[i] == key)
+            return i;
+    }
+    return -1;
+}
+
+// b) Binary Search
+int binarySearch(int arr[], int size, int key) {
+    int low = 0, high = size - 1;
+    while (low <= high) {
+        int mid = low + (high - low) / 2;
+        if (arr[mid] == key)
+            return mid;
+        else if (arr[mid] < key)
+            low = mid + 1;
+        else
+            high = mid - 1;
+    }
+    return -1;
+}
+
+// c) Insertion
+int insertElement(int arr[], int *size, int element, int pos) {
+    if (*size >= MAX) {
+        printf("Error: Array Overflow!\n");
+        return 0;
+    }
+    if (pos < 0 || pos > *size) {
+        printf("Error: Invalid position!\n");
+        return 0;
+    }
+    for (int i = *size; i > pos; i--) {
+        arr[i] = arr[i - 1];
+    }
+    arr[pos] = element;
+    (*size)++;
+    return 1;
+}
+
+// d) Deletion
+int deleteElement(int arr[], int *size, int pos) {
+    if (*size <= 0) {
+        printf("Error: Array Underflow!\n");
+        return 0;
+    }
+    if (pos < 0 || pos >= *size) {
+        printf("Error: Invalid position!\n");
+        return 0;
+    }
+    for (int i = pos; i < *size - 1; i++) {
+        arr[i] = arr[i + 1];
+    }
+    (*size)--;
+    return 1;
+}
+
+// e) Merging
+void mergeArrays(int arr1[], int size1, int arr2[], int size2, int result[], int *resSize) {
+    *resSize = 0;
+    for (int i = 0; i < size1; i++) {
+        result[(*resSize)++] = arr1[i];
+    }
+    for (int i = 0; i < size2; i++) {
+        result[(*resSize)++] = arr2[i];
+    }
+}
+
+// f) Splitting
+void splitArray(int arr[], int size, int pos, int part1[], int *size1, int part2[], int *size2) {
+    if (pos <= 0 || pos >= size) {
+        printf("Error: Invalid split point!\n");
+        *size1 = 0;
+        *size2 = 0;
+        return;
+    }
+    *size1 = pos;
+    *size2 = size - pos;
+
+    for (int i = 0; i < pos; i++) {
+        part1[i] = arr[i];
+    }
+    for (int i = pos; i < size; i++) {
+        part2[i - pos] = arr[i];
+    }
+}
+
+// g) Bubble Sort
+void bubbleSort(int arr[], int size) {
+    for (int i = 0; i < size - 1; i++) {
+        int swapped = 0;
+        for (int j = 0; j < size - i - 1; j++) {
+            if (arr[j] > arr[j + 1]) {
+                int temp = arr[j];
+                arr[j] = arr[j + 1];
+                arr[j + 1] = temp;
+                swapped = 1;
+            }
+        }
+        if (!swapped) break;
+    }
+}
